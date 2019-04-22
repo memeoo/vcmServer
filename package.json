@@ -1,0 +1,11 @@
+{
+  "name": "vcm_server",
+  "version": "1.0.0",
+  "description": "vcm express server",
+  "main": "index.js",
+  "scripts": {
+    "test": "this is vcm_server"
+  },
+  "author": "memeSong",
+  "license": "ISC"
+}
