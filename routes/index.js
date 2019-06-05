@@ -170,9 +170,44 @@ router.post('/signup', function(req, res, next) {
     });
   });
   
-  // router.post('/saveFile', upload.fields(fileNames), function(req, res, next){
-  //   console.log(" Files @@ => ", req.files);
-  //   res.send("Uploaded !! ");
-  // });
+  router.post('/submitMeeting', function(req, res, next) {
+    let database = new DB(configuration);
+    console.log(" Submit Meeting !!");
+    console.log(" req => ", req.body);
+    let data = {
+      'mtNm':req.body.mtNm,
+      'orgNm': req.body.orgNm,
+      'mtCont': req.body.mtCont,
+      'mtCondition': req.body.mtCondition,
+      'mtEtc':req.body.mtEtc,
+      'mtMoney': req.body.mtMoney,
+      'orgPlace': req.body.orgPlace,
+      'uploader': req.body.uploader,
+      'startTime': req.body.timeStart,
+      'endTime': req.body.timeEnd,
+      'date': req.body.date,
+      'isSubmit': req.body.isSubmit,
+    };    
+    let insertQuery = "";
+    if(exid == 0){
+      insertQuery = 
+      "INSERT INTO meeting (mtName, orgName, mtContent, mtQualify, mtEtc, mtMoney, mtAddress, uploader, startTime, endTime, mtDay, isSubmit)"+ 
+      "VALUES ('"+data.mtNm+"','"+data.orgNm+"','"+data.mtCont+"','"+data.mtCondition+"', '"+data.mtEtc+"','"+data.mtMoney+"','"+data.orgPlace+"','"+data.uploader+"','"+data.startTime+"','"+data.endTime+"','"+data.date+"','"+data.isSubmit+"')";
+    }else{
+      insertQuery = 
+      "UPDATE meeting SET(mtName, orgName, mtContent, mtQualify, mtEtc, mtMoney, mtAddress, uploader, startTime, endTime, mtDay, isSubmit) ="+
+      "('"+data.mtNm+"','"+data.orgNm+"','"+data.mtCont+"','"+data.mtCondition+"', '"+data.mtEtc+"','"+data.mtMoney+"','"+data.orgPlace+"','"+data.uploader+"','"+data.startTime+"','"+data.endTime+"','"+data.date+"','"+data.isSubmit+"')"+ 
+      "WHERE examId = '"+exid+"'";
+    }
+
+    database.query(insertQuery).then(rows =>{
+      console.log(" rows => ", rows);
+      exid = rows.insertId;
+      res.status(200).send("Insert Succeed!");
+    }, err =>{
+      console.log(" err => ", err);
+    });
+  });
+
  
 module.exports = router;
