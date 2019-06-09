@@ -90,6 +90,61 @@ router.get('/login', function(req, res, next) {
   
 });
 
+
+// ============= Mobile =================================
+router.get('/loginMobile', function(req, res, next) {
+  let database = new DB(configuration);
+  console.log(" try login !!!!");
+  let id = req.query.id;
+  let pass = req.query.pass;
+  let loginQuery = "select mId, mPass from member where mId='"+id+"' and mPass='"+pass+"'";
+  
+  database.query(loginQuery).then(result =>{
+    console.log(" result => ", result);
+    if(result.length == 0){
+      console.log(" 아이디와 비밀번호를 다시 확인해 주세요 ");
+      res.sendStatus(403);
+      
+    }else{
+      console.log(" @@@@@ ")
+      res.send(200, result);
+    }
+  }).catch(reject =>{
+    console.log(" reject => ", reject);
+  });
+  
+});
+
+router.post('/memberSignup', function(req, res, next) {
+  let database = new DB(configuration);
+  console.log(" try sign up !!!!");
+  console.log(" req => ", req.body);
+  console.log(" req => ", req.body.id);
+  console.log(" req => ", req.body.pass);
+
+  let data = {
+    'mId':req.body.id,
+    'mPass': req.body.pass,
+    'mName': req.body.realName,
+    'mMail': req.body.email,
+    'mPhoneNum': req.body.phoneNum,
+    'mCompany': req.body.company,
+    'mPosition': req.body.position,
+  };
+
+  // let insertQuery = "INSERT INTO provider set ?";
+  let insertQuery = "INSERT INTO member (mId, mPass, mName, mMail, mPhoneNum, mCompany,mPosition ) VALUES ('"+data.mId+"','"+data.mPass+"','"+data.mName+"','"+data.mMail+"','"+data.mPhoneNum+"','"+data.mCompany+"','"+data.mPosition+"')";
+  database.query(insertQuery).then(rows =>{
+    console.log(" rows => ", rows);
+    res.send("Insert Succeed!");
+  }, err =>{
+    console.log(" err => ", err);
+  });
+
+});
+
+
+
 router.get('/getMeetings', function(req, res, next) {
   let database = new DB(configuration);
   console.log(" try login !!!!");
@@ -98,8 +153,9 @@ router.get('/getMeetings', function(req, res, next) {
   
   database.query(selectQuery).then(result =>{
     console.log(" result => ", result);
+    // res.status(200).json(result);
+    res.status(200).send(result);
 
-    res.send(200, result);
   }).catch(reject =>{
     console.log(" reject => ", reject);
   });
@@ -119,10 +175,11 @@ router.post('/signup', function(req, res, next) {
       'password': req.body.pass,
       'name': req.body.name,
       'mail': req.body.smail,
+      'phoneNum': req.body.phoneNumber,
     };
 
     // let insertQuery = "INSERT INTO provider set ?";
-    let insertQuery = "INSERT INTO provider (userId, password, name, mail) VALUES ('"+data.userId+"','"+data.password+"','"+data.name+"','"+data.mail+"')";
+    let insertQuery = "INSERT INTO provider (userId, password, name, mail, phoneNum) VALUES ('"+data.userId+"','"+data.password+"','"+data.name+"','"+data.mail+"','"+data.phoneNum+"')";
     database.query(insertQuery).then(rows =>{
       console.log(" rows => ", rows);
       res.send("Insert Succeed!");
@@ -131,6 +188,8 @@ router.post('/signup', function(req, res, next) {
     });
 
   });
+
+
 
   router.post('/saveMeeting', function(req, res, next) {
     let database = new DB(configuration);
@@ -148,22 +207,32 @@ router.post('/signup', function(req, res, next) {
       'startTime': req.body.timeStart,
       'endTime': req.body.timeEnd,
       'date': req.body.date,
+      'insertOrUpdate': req.body.insertOrUpdate,
+      'mtKind': req.body.mtKind,
+      'mtArea' : req.body.mtArea,
     };    
     let insertQuery = "";
-    if(exid == 0){
+    
+    if(data.insertOrUpdate == "insert"){
       insertQuery = 
-      "INSERT INTO meeting (mtName, orgName, mtContent, mtQualify, mtEtc, mtMoney, mtAddress, uploader, startTime, endTime, mtDay)"+ 
-      "VALUES ('"+data.mtNm+"','"+data.orgNm+"','"+data.mtCont+"','"+data.mtCondition+"', '"+data.mtEtc+"','"+data.mtMoney+"','"+data.orgPlace+"','"+data.uploader+"','"+data.startTime+"','"+data.endTime+"','"+data.date+"')";
+      "INSERT INTO meeting (mtName, orgName, mtContent, mtQualify, mtEtc, mtKind, mtArea, mtMoney, mtAddress, uploader, startTime, endTime, mtDay)"+ 
+      " VALUES ('"+data.mtNm+"','"+data.orgNm+"','"+data.mtCont+"','"+data.mtCondition+"', '"+data.mtEtc+"','"+data.mtKind+"', '"+data.mtArea+"', '" +data.mtMoney+"','"+data.orgPlace+"','"+data.uploader+"','"+data.startTime+"','"+data.endTime+"','"+data.date+"')";
     }else{
+      let meetingId = req.body.mtId;
+      console.log(" meetingId => ", meetingId);
       insertQuery = 
-      "UPDATE meeting SET(mtName, orgName, mtContent, mtQualify, mtEtc, mtMoney, mtAddress, uploader, startTime, endTime, mtDay) ="+
-      "('"+data.mtNm+"','"+data.orgNm+"','"+data.mtCont+"','"+data.mtCondition+"', '"+data.mtEtc+"','"+data.mtMoney+"','"+data.orgPlace+"','"+data.uploader+"','"+data.startTime+"','"+data.endTime+"','"+data.date+"')"+ 
-      "WHERE examId = '"+exid+"'";
+      "UPDATE meeting SET mtName = '"+data.mtNm+"', orgName = '"+data.orgNm+"', mtContent = '"+data.mtCont+"', mtQualify = '"+data.mtCondition+ 
+      "', mtEtc = '"+data.mtEtc+"', mtKind = '"+data.mtKind+"', mtArea = '"+data.mtArea+"', mtMoney = '"+data.mtMoney+"', mtAddress = '"+data.orgPlace+
+      "', uploader = '"+data.uploader+"', startTime = '"+data.startTime+"', endTime = '"+data.endTime+"', mtDay = '"+data.date+ 
+      "' WHERE mtId = '"+meetingId+"'";
+
     }
+
+    console.log(" QUERY ==> ", insertQuery);
 
     database.query(insertQuery).then(rows =>{
       console.log(" rows => ", rows);
-      exid = rows.insertId;
+      let insertedMeetingId = rows.insertId;
       res.status(200).send("Insert Succeed!");
     }, err =>{
       console.log(" err => ", err);
@@ -188,17 +257,22 @@ router.post('/signup', function(req, res, next) {
       'date': req.body.date,
       'isSubmit': req.body.isSubmit,
     };    
+    console.log(" data => ", data);
     let insertQuery = "";
-    if(exid == 0){
+    if(data.insertOrUpdate == "insert"){
       insertQuery = 
-      "INSERT INTO meeting (mtName, orgName, mtContent, mtQualify, mtEtc, mtMoney, mtAddress, uploader, startTime, endTime, mtDay, isSubmit)"+ 
-      "VALUES ('"+data.mtNm+"','"+data.orgNm+"','"+data.mtCont+"','"+data.mtCondition+"', '"+data.mtEtc+"','"+data.mtMoney+"','"+data.orgPlace+"','"+data.uploader+"','"+data.startTime+"','"+data.endTime+"','"+data.date+"','"+data.isSubmit+"')";
+      "INSERT INTO meeting (mtName, orgName, mtContent, mtQualify, mtEtc, mtKind, mtArea, mtMoney, mtAddress, uploader, startTime, endTime, mtDay, isSubmit)"+ 
+      "VALUES ('"+data.mtNm+"','"+data.orgNm+"','"+data.mtCont+"','"+data.mtCondition+"', '"+data.mtEtc+"', '"+data.mtKind+"', '"+data.mtArea+"', '"+data.mtMoney+"','"+data.orgPlace+"', '"+data.uploader+"', '"+data.startTime+"','"+data.endTime+"','"+data.date+"','"+data.isSubmit+"')";
     }else{
+      let meetingId = req.body.mtId;
       insertQuery = 
-      "UPDATE meeting SET(mtName, orgName, mtContent, mtQualify, mtEtc, mtMoney, mtAddress, uploader, startTime, endTime, mtDay, isSubmit) ="+
-      "('"+data.mtNm+"','"+data.orgNm+"','"+data.mtCont+"','"+data.mtCondition+"', '"+data.mtEtc+"','"+data.mtMoney+"','"+data.orgPlace+"','"+data.uploader+"','"+data.startTime+"','"+data.endTime+"','"+data.date+"','"+data.isSubmit+"')"+ 
-      "WHERE examId = '"+exid+"'";
+      "UPDATE meeting SET mtName = '"+data.mtNm+"', orgName = '"+data.orgNm+"', mtContent = '"+data.mtCont+"', mtQualify = '"+data.mtCondition+ 
+      "', mtEtc = '"+data.mtEtc+"', mtKind = '"+data.mtKind+"', mtArea = '"+data.mtArea+"', mtMoney = '"+data.mtMoney+"', mtAddress = '"+data.orgPlace+
+      "', uploader = '"+data.uploader+"', startTime = '"+data.startTime+"', endTime = '"+data.endTime+"', mtDay = '"+data.date+"', isSubmit = '"+data.isSubmit+ 
+      "' WHERE mtId = '"+meetingId+"'";
     }
+    
+    console.log(" QUERY ==> ", insertQuery);
 
     database.query(insertQuery).then(rows =>{
       console.log(" rows => ", rows);
