@@ -90,7 +90,6 @@ router.get('/login', function(req, res, next) {
   
 });
 
-
 // ============= Mobile =================================
 router.get('/loginMobile', function(req, res, next) {
   let database = new DB(configuration);
@@ -233,7 +232,7 @@ router.post('/signup', function(req, res, next) {
     database.query(insertQuery).then(rows =>{
       console.log(" rows => ", rows);
       let insertedMeetingId = rows.insertId;
-      res.status(200).send("Insert Succeed!");
+      res.status(200).send(data.uploader);
     }, err =>{
       console.log(" err => ", err);
     });
@@ -277,11 +276,10 @@ router.post('/signup', function(req, res, next) {
     database.query(insertQuery).then(rows =>{
       console.log(" rows => ", rows);
       exid = rows.insertId;
-      res.status(200).send("Insert Succeed!");
+      res.status(200).send(data.uploader);
     }, err =>{
       console.log(" err => ", err);
     });
   });
-
  
-module.exports = router;
+module.exports = router; 
