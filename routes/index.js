@@ -255,6 +255,9 @@ router.post('/signup', function(req, res, next) {
       'endTime': req.body.timeEnd,
       'date': req.body.date,
       'isSubmit': req.body.isSubmit,
+      'insertOrUpdate': req.body.insertOrUpdate,
+      'mtKind': req.body.mtKind,
+      'mtArea' : req.body.mtArea,
     };    
     console.log(" data => ", data);
     let insertQuery = "";
@@ -275,6 +278,7 @@ router.post('/signup', function(req, res, next) {
 
     database.query(insertQuery).then(rows =>{
       console.log(" rows => ", rows);
+      console.log(" data.uploader => ", data.uploader);
       exid = rows.insertId;
       res.status(200).send(data.uploader);
     }, err =>{
