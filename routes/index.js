@@ -209,22 +209,22 @@ router.post('/signup', function(req, res, next) {
       'insertOrUpdate': req.body.insertOrUpdate,
       'mtKind': req.body.mtKind,
       'mtArea' : req.body.mtArea,
+      'isSubmit': req.body.isSubmit,
     };    
     let insertQuery = "";
     
     if(data.insertOrUpdate == "insert"){
       insertQuery = 
-      "INSERT INTO meeting (mtName, orgName, mtContent, mtQualify, mtEtc, mtKind, mtArea, mtMoney, mtAddress, uploader, startTime, endTime, mtDay)"+ 
-      " VALUES ('"+data.mtNm+"','"+data.orgNm+"','"+data.mtCont+"','"+data.mtCondition+"', '"+data.mtEtc+"','"+data.mtKind+"', '"+data.mtArea+"', '" +data.mtMoney+"','"+data.orgPlace+"','"+data.uploader+"','"+data.startTime+"','"+data.endTime+"','"+data.date+"')";
+      "INSERT INTO meeting (mtName, orgName, mtContent, mtQualify, mtEtc, mtKind, mtArea, mtMoney, mtAddress, uploader, startTime, endTime, mtDay, isSubmit)"+ 
+      " VALUES ('"+data.mtNm+"','"+data.orgNm+"','"+data.mtCont+"','"+data.mtCondition+"', '"+data.mtEtc+"','"+data.mtKind+"', '"+data.mtArea+"', '" +data.mtMoney+"','"+data.orgPlace+"','"+data.uploader+"','"+data.startTime+"','"+data.endTime+"','"+data.date+",'"+data.isSubmit+"')";
     }else{
       let meetingId = req.body.mtId;
       console.log(" meetingId => ", meetingId);
       insertQuery = 
       "UPDATE meeting SET mtName = '"+data.mtNm+"', orgName = '"+data.orgNm+"', mtContent = '"+data.mtCont+"', mtQualify = '"+data.mtCondition+ 
       "', mtEtc = '"+data.mtEtc+"', mtKind = '"+data.mtKind+"', mtArea = '"+data.mtArea+"', mtMoney = '"+data.mtMoney+"', mtAddress = '"+data.orgPlace+
-      "', uploader = '"+data.uploader+"', startTime = '"+data.startTime+"', endTime = '"+data.endTime+"', mtDay = '"+data.date+ 
+      "', uploader = '"+data.uploader+"', startTime = '"+data.startTime+"', endTime = '"+data.endTime+"', mtDay = '"+data.date+"', isSubmit = '"+data.isSubmit+ 
       "' WHERE mtId = '"+meetingId+"'";
-
     }
 
     console.log(" QUERY ==> ", insertQuery);
