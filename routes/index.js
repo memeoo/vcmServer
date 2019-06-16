@@ -146,7 +146,7 @@ router.get('/getMobileMeetings', function(req, res, next) {
   let database = new DB(configuration);
   console.log(" get Meetings which are submitted ");
   let userId = req.query.id;
-  let selectQuery = "select * from meeting where isSubmit='YES'";
+  let selectQuery = "select * from meeting where isSubmit='YES' ORDER BY mtDay";
   
   database.query(selectQuery).then(result =>{
     console.log(" result => ", result);
