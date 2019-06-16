@@ -142,7 +142,25 @@ router.post('/memberSignup', function(req, res, next) {
 
 });
 
+router.get('/getMobileMeetings', function(req, res, next) {
+  let database = new DB(configuration);
+  console.log(" get Meetings which are submitted ");
+  let userId = req.query.id;
+  let selectQuery = "select * from meeting where isSubmit='YES'";
+  
+  database.query(selectQuery).then(result =>{
+    console.log(" result => ", result);
+    // res.status(200).json(result);
+    res.status(200).send(result);
 
+  }).catch(reject =>{
+    console.log(" reject => ", reject);
+  });
+  
+});
+
+
+// ======= Provider Web ====================================================
 
 router.get('/getMeetings', function(req, res, next) {
   let database = new DB(configuration);
