@@ -159,6 +159,46 @@ router.get('/getMobileMeetings', function(req, res, next) {
   
 });
 
+router.get('/getMobileMember', function(req, res, next) {
+  let database = new DB(configuration);
+  console.log(" get Member data of Mobile");
+  let userId = req.query.id;
+  let selectQuery = "select mName, mCompany, mPosition, mEtc, mMail, mPhoneNum from member where mId='"+userId+"'";
+  
+  database.query(selectQuery).then(result =>{
+    console.log(" result => ", result);
+    // res.status(200).json(result);
+    res.status(200).send(result);
+
+  }).catch(reject =>{
+    console.log(" reject => ", reject);
+  });
+  
+});
+
+router.post('/applyMobile', function(req, res, next) {
+  let database = new DB(configuration);
+  console.log(" Apply Mobile !!");
+  console.log(" req => ", req.body);
+
+  let data = {
+    'vcId':req.body.id,
+    'mtId': req.body.pass,
+    'appeal': req.body.realName,
+  };
+
+  // let insertQuery = "INSERT INTO provider set ?";
+  let insertQuery = "INSERT INTO apply (vcId, mtId, appeal) VALUES" + 
+                    "('"+data.vcId+"','"+data.mtId+"','"+data.appeal+"')";
+  database.query(insertQuery).then(rows =>{
+    console.log(" rows => ", rows);
+    res.status(200).send(rows);
+  }, err =>{
+    console.log(" err => ", err);
+  });
+
+});
+
 
 // ======= Provider Web ====================================================
 
