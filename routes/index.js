@@ -185,12 +185,18 @@ router.post('/applyMobile', function(req, res, next) {
     'mtId': req.body.mtId,
     'appeal': req.body.appeal,
     'provId' : req.body.provId,
+    'vcName':req.body.vcName,
+    'vcCompany': req.body.vcCompany,
+    'vcPosition': req.body.vcPosition,
+    'vcEtc' : req.body.vcEtc,
+    'vcMail': req.body.vcMail,
+    'vcPhoneNum' : req.body.vcPhoneNum,
   };
 
   console.log(" data => ", data);
   // let insertQuery = "INSERT INTO provider set ?";
-  let insertQuery = "INSERT INTO apply (vcId, mtId, appeal, provId) VALUES" + 
-                    "('"+data.vcId+"','"+data.mtId+"','"+data.appeal+"','"+data.provId+"')";
+  let insertQuery = "INSERT INTO apply (vcId, mtId, appeal, provId, vcName, vcCompany, vcPosition, vcEtc, vcMail, vcPhoneNum) VALUES" + 
+                    "('"+data.vcId+"','"+data.mtId+"','"+data.appeal+"','"+data.provId+"','"+data.vcName+"','"+data.vcCompany+"','"+data.vcPosition+"','"+data.vcEtc+"','"+data.vcMail+"','"+data.vcPhoneNum+"')";
   database.query(insertQuery).then(rows =>{
     console.log(" rows => ", rows);
     res.status(200).send(rows);
@@ -241,8 +247,8 @@ router.get('/getMeetings', function(req, res, next) {
 router.get('/getApplied', function(req, res, next) {
   let database = new DB(configuration);
   console.log(" get Applied !!");
-  let uploader = req.query.id;
-  let selectQuery = "select * from meeting where uploader='"+uploader+"'";
+  let provId = req.query.provId;
+  let selectQuery = "select * from apply where provId='"+provId+"'";
   
   database.query(selectQuery).then(result =>{
     console.log(" result => ", result);
