@@ -145,7 +145,6 @@ router.post('/memberSignup', function(req, res, next) {
 router.get('/getMobileMeetings', function(req, res, next) {
   let database = new DB(configuration);
   console.log(" get Meetings which are submitted ");
-  let userId = req.query.id;
   let selectQuery = "select * from meeting where isSubmit='YES' ORDER BY mtDay";
   
   database.query(selectQuery).then(result =>{
@@ -182,11 +181,12 @@ router.post('/applyMobile', function(req, res, next) {
   console.log(" req => ", req.body);
 
   let data = {
-    'vcId':req.body.id,
-    'mtId': req.body.pass,
-    'appeal': req.body.realName,
+    'vcId':req.body.vcId,
+    'mtId': req.body.mtId,
+    'appeal': req.body.appeal,
   };
-
+  
+  console.log(" data => ", data);
   // let insertQuery = "INSERT INTO provider set ?";
   let insertQuery = "INSERT INTO apply (vcId, mtId, appeal) VALUES" + 
                     "('"+data.vcId+"','"+data.mtId+"','"+data.appeal+"')";
@@ -201,6 +201,24 @@ router.post('/applyMobile', function(req, res, next) {
 
 
 // ======= Provider Web ====================================================
+
+router.get('/getApply', function(req, res, next) {
+  let database = new DB(configuration);
+  console.log(" Get Apply !! ");
+  let vcId = req.query.vcId;
+  let mtId = req.query.mtId;
+  let selectQuery = "select * from apply where vcId='"+vcId+"' and mtId='"+mtId+"'";
+  
+  database.query(selectQuery).then(result =>{
+    console.log(" result => ", result);
+    // res.status(200).json(result);
+    res.status(200).send(result);
+
+  }).catch(reject =>{
+    console.log(" reject => ", reject);
+  });
+  
+});
 
 router.get('/getMeetings', function(req, res, next) {
   let database = new DB(configuration);
