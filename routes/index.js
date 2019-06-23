@@ -184,12 +184,13 @@ router.post('/applyMobile', function(req, res, next) {
     'vcId':req.body.vcId,
     'mtId': req.body.mtId,
     'appeal': req.body.appeal,
+    'provId' : req.body.provId,
   };
-  
+
   console.log(" data => ", data);
   // let insertQuery = "INSERT INTO provider set ?";
-  let insertQuery = "INSERT INTO apply (vcId, mtId, appeal) VALUES" + 
-                    "('"+data.vcId+"','"+data.mtId+"','"+data.appeal+"')";
+  let insertQuery = "INSERT INTO apply (vcId, mtId, appeal, provId) VALUES" + 
+                    "('"+data.vcId+"','"+data.mtId+"','"+data.appeal+"','"+data.provId+"')";
   database.query(insertQuery).then(rows =>{
     console.log(" rows => ", rows);
     res.status(200).send(rows);
@@ -223,6 +224,23 @@ router.get('/getApply', function(req, res, next) {
 router.get('/getMeetings', function(req, res, next) {
   let database = new DB(configuration);
   console.log(" try login !!!!");
+  let uploader = req.query.id;
+  let selectQuery = "select * from meeting where uploader='"+uploader+"'";
+  
+  database.query(selectQuery).then(result =>{
+    console.log(" result => ", result);
+    // res.status(200).json(result);
+    res.status(200).send(result);
+
+  }).catch(reject =>{
+    console.log(" reject => ", reject);
+  });
+  
+});
+
+router.get('/getApplied', function(req, res, next) {
+  let database = new DB(configuration);
+  console.log(" get Applied !!");
   let uploader = req.query.id;
   let selectQuery = "select * from meeting where uploader='"+uploader+"'";
   
