@@ -145,7 +145,8 @@ router.post('/memberSignup', function(req, res, next) {
 router.get('/getMobileMeetings', function(req, res, next) {
   let database = new DB(configuration);
   console.log(" get Meetings which are submitted ");
-  let selectQuery = "select * from meeting where isSubmit='YES' ORDER BY mtDay";
+  // 오늘보다 크고(미래) 27일후(오늘포함 4주후) 보다 작은 날짜들만 가져옴. 
+  let selectQuery = "select * from meeting where isSubmit='YES' and mtDay >= (NOW()) and mtDay <= (NOW() + INTERVAL 27 DAY) ORDER BY mtDay";
   
   database.query(selectQuery).then(result =>{
     console.log(" result => ", result);
